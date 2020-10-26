@@ -16,8 +16,6 @@ router.get('/status', async (req, res) => {
       }
     }
 
-    console.log(FastExecuteScript, Worker);
-
     if (FastExecuteScript && Worker) res.status(201).send('Online');
     else if (!FastExecuteScript) res.status(201).send('Offline');
     else if (FastExecuteScript && !Worker) res.status(201).send('Need reboot');
