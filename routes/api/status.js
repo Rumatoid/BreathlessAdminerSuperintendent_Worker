@@ -38,7 +38,14 @@ router.get('/update', async (req, res) => {
   var exec = require('child_process').exec;
 
   await exec(
-    'cd C:/Users/Administrator/Downloads/BreathlessAdminerSuperintendent_Worker;git pull'
+    'git pull',
+    {
+      cwd:
+        'C:/Users/Administrator/Downloads/BreathlessAdminerSuperintendent_Worker',
+    },
+    function (err, stdout, stderr) {
+      console.log(stdout);
+    }
   );
 
   res.status(201).send('TRUE');
