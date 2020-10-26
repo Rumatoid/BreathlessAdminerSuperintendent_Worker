@@ -19,4 +19,19 @@ router.get('/status', async (req, res) => {
   });
 });
 
+router.get('/reboot', async (req, res) => {
+  var exec = require('child_process').exec;
+
+  await exec('wmic process where name="FastExecuteScript.exe" call terminate');
+  await exec('wmic process where name="Worker.exe" call terminate');
+  await exec(
+    'C:/Users/Administrator/Downloads/Worker/serverHeavyXProfilesOFFXdbTEST/RemoteExecuteScriptSilent.exe',
+    function (err, stdout, stderr) {
+      console.log(stdout);
+    }
+  );
+
+  res.status(201).send('Done');
+});
+
 module.exports = router;

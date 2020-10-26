@@ -13,6 +13,6 @@ const status = require('./routes/api/status');
 
 app.use('/', status);
 
-const port = process.env.PORT || 3000;
+const port = 80;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
