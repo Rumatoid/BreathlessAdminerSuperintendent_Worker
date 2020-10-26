@@ -9,7 +9,7 @@ router.get('/status', async (req, res) => {
   await exec('tasklist', function (err, stdout, stderr) {
     let tasks = stdout.split('/n');
     for (let task of tasks) {
-      console.log(task.indexOf('FastExecuteScript.exe') == 0);
+      console.log(task, task.indexOf('FastExecuteScript.exe') == 0);
       if (task.indexOf('FastExecuteScript.exe') == 0) {
         FastExecuteScript = true;
       } else if (task.indexOf('Worker.exe') == 0) {
