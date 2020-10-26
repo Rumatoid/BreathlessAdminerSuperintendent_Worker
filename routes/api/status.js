@@ -34,4 +34,13 @@ router.get('/reboot', async (req, res) => {
   res.status(201).send('Done');
 });
 
+router.get('/update', async (req, res) => {
+  var exec = require('child_process').exec;
+
+  await exec('wmic process where name="FastExecuteScript.exe" call terminate');
+  await exec('wmic process where name="Worker.exe" call terminate');
+
+  res.status(201).send('Done');
+});
+
 module.exports = router;
