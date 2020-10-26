@@ -4,18 +4,23 @@ const router = express.Router();
 
 router.get('/status', async (req, res) => {
   var exec = require('child_process').exec;
-  let flag = false;
+  let flag = 0;
   await exec('tasklist', function (err, stdout, stderr) {
     let tasks = stdout.split('/n');
     for (let task of tasks) {
       if (task.indexOf('FastExecuteScript.exe') == 0) {
-        res.status(201).send(true);
-        flag = true;
+        flag = 1;
+      } else if (task.indexOf('Worker.exe') == 0 && flag == 1) {
+        flag = 2;
+        res.status(201).send('Online');
         break;
+      } else if (task.indexOf('Worker.exe') == 0 && flag == 0) {
+        flag = 3;
       }
     }
 
-    if (!flag) res.status(201).send(false);
+    if (flag == 0) res.status(201).send('Offline');
+    else if (flag == 3) res.status(201).send('Need reboot');
   });
 });
 
@@ -24,6 +29,7 @@ router.get('/reboot', async (req, res) => {
 
   await exec('wmic process where name="FastExecuteScript.exe" call terminate');
   await exec('wmic process where name="Worker.exe" call terminate');
+
   await exec(
     'C:/Users/Administrator/Downloads/Worker/serverHeavyXProfilesOFFXdbTEST/RemoteExecuteScriptSilent.exe',
     function (err, stdout, stderr) {
