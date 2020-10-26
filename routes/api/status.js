@@ -4,23 +4,21 @@ const router = express.Router();
 
 router.get('/status', async (req, res) => {
   var exec = require('child_process').exec;
-  let flag = 0;
+  let FastExecuteScript = false;
+  let Worker = false;
   await exec('tasklist', function (err, stdout, stderr) {
     let tasks = stdout.split('/n');
     for (let task of tasks) {
       if (task.indexOf('FastExecuteScript.exe') == 0) {
-        flag = 1;
+        FastExecuteScript = true;
       } else if (task.indexOf('Worker.exe') == 0 && flag == 1) {
-        flag = 2;
-        res.status(201).send('Online');
-        break;
-      } else if (task.indexOf('Worker.exe') == 0 && flag == 0) {
-        flag = 3;
+        Worker = true;
       }
     }
 
-    if (flag == 0) res.status(201).send('Offline');
-    else if (flag == 3) res.status(201).send('Need reboot');
+    if (FastExecuteScript && Worker) res.status(201).send('Online');
+    else if (!FastExecuteScript) res.status(201).send('Offline');
+    else if (FastExecuteScript && !Worker) res.status(201).send('Need reboot');
   });
 });
 
