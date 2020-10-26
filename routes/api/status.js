@@ -6,7 +6,7 @@ router.get('/status', async (req, res) => {
   var exec = require('child_process').exec;
   let flag = false;
   await exec('tasklist', function (err, stdout, stderr) {
-    let tasks = stdout.split('\n');
+    let tasks = stdout.split('/n');
     for (let task of tasks) {
       if (task.indexOf('FastExecuteScript.exe') == 0) {
         res.status(201).send(true);
@@ -37,8 +37,9 @@ router.get('/reboot', async (req, res) => {
 router.get('/update', async (req, res) => {
   var exec = require('child_process').exec;
 
-  await exec('wmic process where name="FastExecuteScript.exe" call terminate');
-  await exec('wmic process where name="Worker.exe" call terminate');
+  await exec(
+    'cd C:/Users/Administrator/Downloads/BreathlessAdminerSuperintendent_Worker;git pull'
+  );
 
   res.status(201).send('TRUE');
 });
