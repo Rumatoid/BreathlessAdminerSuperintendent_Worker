@@ -40,7 +40,7 @@ router.get('/update', async (req, res) => {
   await exec('wmic process where name="FastExecuteScript.exe" call terminate');
   await exec('wmic process where name="Worker.exe" call terminate');
 
-  res.status(201).send('Done');
+  res.status(201).send('TRUE');
 });
 
 module.exports = router;
