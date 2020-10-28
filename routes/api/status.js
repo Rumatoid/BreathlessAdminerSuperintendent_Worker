@@ -1,5 +1,9 @@
 const express = require('express');
 
+const convert = require('xml-js');
+const fs = require('fs');
+const { time } = require('console');
+
 const router = express.Router();
 
 router.get('/status', async (req, res) => {
@@ -23,6 +27,7 @@ router.get('/status', async (req, res) => {
 });
 
 router.get('/reboot', async (req, res) => {
+  console.log('Go to reboot');
   var exec = require('child_process').exec;
 
   await exec('wmic process where name="FastExecuteScript.exe" call terminate');
@@ -34,8 +39,9 @@ router.get('/reboot', async (req, res) => {
       console.log(stdout);
     }
   );
+  console.log('Reboot Done');
 
-  res.status(201).send('Done');
+  res.status(200).send('Done');
 });
 
 router.get('/update', async (req, res) => {
@@ -52,7 +58,45 @@ router.get('/update', async (req, res) => {
     }
   );
 
-  res.status(201).send('TRUE');
+  res.status(200).send('TRUE');
+});
+
+router.get('/getSettings', async (req, res) => {
+  let xml_string = fs.readFileSync(
+    'D:/Programs/BrowserAutomationStudio/release/serverHeavyXProfilesOFFXdbTEST/appsremote/serverHeavyXProfilesOFFXdbTEST/SID71a5577f/engine/Actual.serverHeavyXProfilesOFFXdbTEST.xml',
+    'utf8'
+  );
+
+  var result = JSON.parse(
+    convert.xml2json(xml_string, { compact: true, spaces: 4 })
+  );
+
+  res.status(200).send(result.BrowserAutomationStudioProject.ModelList.Model);
+});
+
+router.post('/saveSettings', async (req, res) => {
+  let xml_string = fs.readFileSync(
+    'D:/Programs/BrowserAutomationStudio/release/serverHeavyXProfilesOFFXdbTEST/appsremote/serverHeavyXProfilesOFFXdbTEST/SID71a5577f/engine/Actual.serverHeavyXProfilesOFFXdbTEST.xml',
+    'utf8'
+  );
+
+  var result = JSON.parse(
+    convert.xml2json(xml_string, { compact: true, spaces: 4 })
+  );
+
+  result.BrowserAutomationStudioProject.ModelList.Model = req.body;
+
+  var options = { compact: true, ignoreComment: true, spaces: 4 };
+  var resultXML = convert.json2xml(result, options);
+
+  fs.writeFileSync(
+    'D:/Programs/BrowserAutomationStudio/release/serverHeavyXProfilesOFFXdbTEST/appsremote/serverHeavyXProfilesOFFXdbTEST/SID71a5577f/engine/Actual.serverHeavyXProfilesOFFXdbTEST.xml',
+    resultXML
+  );
+
+  console.log('Save Settings Done');
+
+  res.status(200).send('Done');
 });
 
 module.exports = router;
