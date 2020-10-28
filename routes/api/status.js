@@ -58,14 +58,32 @@ router.get('/update', async (req, res) => {
     }
   );
 
+  await exec(
+    'npm i',
+    {
+      cwd:
+        'C:/Users/Administrator/Downloads/BreathlessAdminerSuperintendent_Worker',
+    },
+    function (err, stdout, stderr) {
+      console.log(stdout);
+    }
+  );
+
   res.status(200).send('TRUE');
 });
 
-router.get('/getSettings', async (req, res) => {
-  let xml_string = fs.readFileSync(
-    'D:/Programs/BrowserAutomationStudio/release/serverHeavyXProfilesOFFXdbTEST/appsremote/serverHeavyXProfilesOFFXdbTEST/SID71a5577f/engine/Actual.serverHeavyXProfilesOFFXdbTEST.xml',
-    'utf8'
-  );
+router.get('/getSettings/:template', async (req, res) => {
+  let template = req.params.template;
+  let path = '/Templates/' + template + '/appsremote/' + template;
+
+  let folders = fs.readdirSync(path);
+  let folderPATH = null;
+  for (let folder of folders)
+    if (folder.match(/SID+.*/) != null) folderPATH = folder;
+
+  path += '/' + folderPATH + '/engine/Actual.' + template + '.xml';
+
+  let xml_string = fs.readFileSync(path, 'utf8');
 
   var result = JSON.parse(
     convert.xml2json(xml_string, { compact: true, spaces: 4 })
@@ -75,26 +93,30 @@ router.get('/getSettings', async (req, res) => {
 });
 
 router.post('/saveSettings', async (req, res) => {
-  let xml_string = fs.readFileSync(
-    'D:/Programs/BrowserAutomationStudio/release/serverHeavyXProfilesOFFXdbTEST/appsremote/serverHeavyXProfilesOFFXdbTEST/SID71a5577f/engine/Actual.serverHeavyXProfilesOFFXdbTEST.xml',
-    'utf8'
-  );
+  let template = req.body.template;
+  let path = '/Templates/' + template + '/appsremote/' + template;
+
+  let folders = fs.readdirSync(path);
+  let folderPATH = null;
+  for (let folder of folders)
+    if (folder.match(/SID+.*/) != null) folderPATH = folder;
+
+  path += '/' + folderPATH + '/engine/Actual.' + template + '.xml';
+
+  let xml_string = fs.readFileSync(path, 'utf8');
 
   var result = JSON.parse(
     convert.xml2json(xml_string, { compact: true, spaces: 4 })
   );
 
-  result.BrowserAutomationStudioProject.ModelList.Model = req.body;
+  result.BrowserAutomationStudioProject.ModelList.Model = req.body.data;
 
   var options = { compact: true, ignoreComment: true, spaces: 4 };
   var resultXML = convert.json2xml(result, options);
 
-  fs.writeFileSync(
-    'D:/Programs/BrowserAutomationStudio/release/serverHeavyXProfilesOFFXdbTEST/appsremote/serverHeavyXProfilesOFFXdbTEST/SID71a5577f/engine/Actual.serverHeavyXProfilesOFFXdbTEST.xml',
-    resultXML
-  );
+  fs.writeFileSync(path, resultXML);
 
-  console.log('Save Settings Done');
+  console.log(template + ' Save Settings Done');
 
   res.status(200).send('Done');
 });
