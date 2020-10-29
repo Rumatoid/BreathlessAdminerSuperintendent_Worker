@@ -45,29 +45,29 @@ router.get('/reboot', async (req, res) => {
 });
 
 router.get('/update', async (req, res) => {
-  var exec = require('child_process').exec;
+  // var exec = require('child_process').exec;
 
-  await exec(
-    'git pull',
-    {
-      cwd:
-        'C:/Users/Administrator/Downloads/BreathlessAdminerSuperintendent_Worker',
-    },
-    function (err, stdout, stderr) {
-      console.log(stdout);
-    }
-  );
+  // await exec(
+  //   'git pull',
+  //   {
+  //     cwd:
+  //       'C:/Users/Administrator/Downloads/BreathlessAdminerSuperintendent_Worker',
+  //   },
+  //   function (err, stdout, stderr) {
+  //     console.log(stdout);
+  //   }
+  // );
 
-  await exec(
-    'npm i',
-    {
-      cwd:
-        'C:/Users/Administrator/Downloads/BreathlessAdminerSuperintendent_Worker',
-    },
-    function (err, stdout, stderr) {
-      console.log(stdout);
-    }
-  );
+  // await exec(
+  //   'npm i',
+  //   {
+  //     cwd:
+  //       'C:/Users/Administrator/Downloads/BreathlessAdminerSuperintendent_Worker',
+  //   },
+  //   function (err, stdout, stderr) {
+  //     console.log(stdout);
+  //   }
+  // );
 
   res.status(200).send('TRUE');
 });
