@@ -3,6 +3,7 @@ const express = require('express');
 const fs = require('fs');
 const http = require('http');
 const unzipper = require('unzipper');
+const rimraf = require('rimraf');
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.post('/add', async (req, res) => {
   let file = fs.createWriteStream('/Templates/file.zip');
 
   http.get(
-    `http://95.84.135.236:5000/api/templates/${req.body.template}`,
+    `http://95.84.160.108:5000/api/templates/${req.body.template}`,
     async (httpRes) => {
       httpRes.pipe(file);
 
@@ -35,6 +36,19 @@ router.post('/add', async (req, res) => {
         );
     }
   );
+});
+
+router.post('/delete/', async (req, res) => {
+  try {
+    let folders = fs.readdirSync('/Templates');
+
+    rimraf.sync('/Templates/' + req.body.template);
+
+    res.status(200).send('OK');
+  } catch (err) {
+    console.log(err);
+    if (err) res.status(409).send();
+  }
 });
 
 module.exports = router;
